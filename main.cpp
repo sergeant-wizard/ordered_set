@@ -7,10 +7,12 @@ public:
     OrderedSet() = delete;
     OrderedSet(const OrderedSet& other) = delete;
     virtual ~OrderedSet(){}
-    OrderedSet(const std::vector<T>& seeds): seeds(seeds) {
-    }
-    std::vector<std::vector<T>> getAllSequence()
+    OrderedSet(const std::vector<T>& seeds):
+        seeds(seeds),
+        numOrderedSets(factorial(seeds.size()))
     {
+    }
+    std::vector<std::vector<T>> getAllOrderedSets() {
         static const T rootValue = 0;
         Node root = {createNode(seeds), rootValue};
         std::vector<std::vector<T>> ret = traverse(root);
@@ -20,6 +22,9 @@ public:
         }
         return ret;
     }
+    unsigned getNumOrderedSets() const {
+        return numOrderedSets;
+    }
 
 private:
     struct Node {
@@ -27,7 +32,14 @@ private:
         T value;
     };
 
-    std::vector<T> eraseElement(const std::vector<T>& vec, T element) {
+    static unsigned factorial(unsigned n) {
+        if (n > 1)
+            return n * factorial(n-1);
+        else
+            return 1;
+    }
+
+    static std::vector<T> eraseElement(const std::vector<T>& vec, T element) {
         std::vector<T> ret = vec;
         ret.erase(
             std::remove(
@@ -38,7 +50,7 @@ private:
         return ret;
     }
 
-    std::vector<Node> createNode(std::vector<T> seeds) {
+    static std::vector<Node> createNode(const std::vector<T>& seeds) {
         std::vector<Node> ret;
         if (seeds.size() == 1) {
             std::vector<Node> emptyChildren;
@@ -52,7 +64,7 @@ private:
         }
     }
 
-    std::vector<std::vector<T>> traverse(const Node& node) {
+    static std::vector<std::vector<T>> traverse(const Node& node) {
         if (node.children.empty()) {
             return {{node.value}};
         } else {
@@ -69,12 +81,14 @@ private:
         }
     }
 
-    std::vector<T> seeds;
+    const std::vector<T> seeds;
+    const unsigned numOrderedSets;
 };
 
 int main(void) {
     OrderedSet<int> os({1,2,3,4});
-    for (const auto& a : os.getAllSequence()) {
+    std::cout << "num:" << os.getNumOrderedSets() << std::endl;
+    for (const auto& a : os.getAllOrderedSets()) {
         for (const auto& b : a) {
             std::cout << b << " ";
         }
