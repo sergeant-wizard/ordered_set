@@ -14,6 +14,17 @@ struct Node {
     int value;
 };
 
+std::vector<int> eraseElement(const std::vector<int>& vec, int element) {
+    std::vector<int> ret = vec;
+    ret.erase(
+        std::remove(
+            ret.begin(),
+            ret.end(),
+            element),
+        ret.end());
+    return ret;
+}
+
 std::vector<Node> createNode(std::vector<int> seeds) {
     std::vector<Node> ret;
     if (seeds.size() == 1) {
@@ -22,14 +33,7 @@ std::vector<Node> createNode(std::vector<int> seeds) {
         return ret;
     } else {
         for (const auto& seed : seeds) {
-            std::vector<int> childrenSeeds = seeds;
-            childrenSeeds.erase(
-                std::remove(
-                    childrenSeeds.begin(),
-                    childrenSeeds.end(),
-                    seed),
-                childrenSeeds.end());
-            ret.push_back({createNode(childrenSeeds), seed});
+            ret.push_back({createNode(eraseElement(seeds, seed)), seed});
         }
         return ret;
     }
